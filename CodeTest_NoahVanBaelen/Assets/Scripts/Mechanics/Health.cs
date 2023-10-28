@@ -1,6 +1,8 @@
 using System;
 using Platformer.Gameplay;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
 using static Platformer.Core.Simulation;
 
 namespace Platformer.Mechanics
@@ -18,9 +20,16 @@ namespace Platformer.Mechanics
         /// <summary>
         /// Indicates if the entity should be considered 'alive'.
         /// </summary>
+        /// 
+        [SerializeField] private UnityEngine.UI.Slider _healthSlider;
         public bool IsAlive => currentHP > 0;
 
         int currentHP;
+
+        void Awake()
+        {
+            ResetHealth();
+        }
 
         /// <summary>
         /// Increment the HP of the entity.
@@ -37,6 +46,7 @@ namespace Platformer.Mechanics
         public void Decrement()
         {
             currentHP = Mathf.Clamp(currentHP - 1, 0, maxHP);
+            _healthSlider.value = (float)currentHP / (float)maxHP;
             if (currentHP == 0)
             {
                 var ev = Schedule<HealthIsZero>();
@@ -47,14 +57,15 @@ namespace Platformer.Mechanics
         /// <summary>
         /// Decrement the HP of the entitiy until HP reaches 0.
         /// </summary>
-        public void Die()
+        public void Hit()
         {
-            while (currentHP > 0) Decrement();
+             Decrement();
         }
 
-        void Awake()
+        public void ResetHealth()
         {
             currentHP = maxHP;
+            _healthSlider.value = currentHP / maxHP;
         }
     }
 }
