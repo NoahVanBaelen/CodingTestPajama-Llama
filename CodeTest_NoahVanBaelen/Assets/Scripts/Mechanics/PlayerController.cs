@@ -40,6 +40,10 @@ namespace Platformer.Mechanics
         internal Animator animator;
         readonly PlatformerModel model = Simulation.GetModel<PlatformerModel>();
 
+        private bool _canDoubleJump = false;
+        private bool _hasDoubleJumped = false;
+        private bool _doubleJump = false;
+
         public Bounds Bounds => collider2d.bounds;
 
         void Awake()
@@ -57,10 +61,17 @@ namespace Platformer.Mechanics
             {
                 move.x = Input.GetAxis("Horizontal");
                 if (jumpState == JumpState.Grounded && Input.GetButtonDown("Jump"))
+                {
                     jumpState = JumpState.PrepareToJump;
+                }
+                else if(jumpState == JumpState.InFlight && Input.GetButtonDown("Jump") && _canDoubleJump && !_hasDoubleJumped)
+                {
+                    jumpState = JumpState.PrepareForDoubleJump;
+                }
                 else if (Input.GetButtonUp("Jump"))
                 {
                     stopJump = true;
+                    _canDoubleJump = true;
                     Schedule<PlayerStopJump>().player = this;
                 }
             }
@@ -82,6 +93,13 @@ namespace Platformer.Mechanics
                     jump = true;
                     stopJump = false;
                     break;
+                case JumpState.PrepareForDoubleJump:
+                    jumpState = JumpState.Jumping;
+                    _doubleJump = true;
+                    stopJump = false;
+                    _canDoubleJump = false;
+                    _hasDoubleJumped = true;
+                    break;
                 case JumpState.Jumping:
                     if (!IsGrounded)
                     {
@@ -98,6 +116,8 @@ namespace Platformer.Mechanics
                     break;
                 case JumpState.Landed:
                     jumpState = JumpState.Grounded;
+                    _hasDoubleJumped = false;
+
                     break;
             }
         }
@@ -108,6 +128,11 @@ namespace Platformer.Mechanics
             {
                 velocity.y = jumpTakeOffSpeed * model.jumpModifier;
                 jump = false;
+            }
+            else if (_doubleJump && !IsGrounded)
+            {
+                velocity.y = jumpTakeOffSpeed * model.jumpModifier;
+                _doubleJump = false;
             }
             else if (stopJump)
             {
@@ -133,6 +158,7 @@ namespace Platformer.Mechanics
         {
             Grounded,
             PrepareToJump,
+            PrepareForDoubleJump,
             Jumping,
             InFlight,
             Landed
