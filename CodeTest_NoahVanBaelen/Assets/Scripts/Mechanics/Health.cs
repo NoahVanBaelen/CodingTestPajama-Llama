@@ -37,6 +37,7 @@ namespace Platformer.Mechanics
         public void Increment()
         {
             currentHP = Mathf.Clamp(currentHP + 1, 0, maxHP);
+            _healthSlider.value = (float)currentHP / (float)maxHP;
         }
 
         /// <summary>
@@ -65,7 +66,7 @@ namespace Platformer.Mechanics
         public void ResetHealth()
         {
             currentHP = maxHP;
-            _healthSlider.value = currentHP / maxHP;
+            _healthSlider.value = (float)currentHP / (float)maxHP;
         }
     }
 }
