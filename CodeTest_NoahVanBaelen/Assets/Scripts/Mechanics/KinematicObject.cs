@@ -38,8 +38,11 @@ namespace Platformer.Mechanics
 
         protected const float minMoveDistance = 0.001f;
         protected const float shellRadius = 0.01f;
-
-
+        protected bool _hittingWall = false;
+        protected float _wallDirection;
+        protected bool _isWallJumping = false;
+        protected float _waitTimeBeforeControlsAfterWallJump = 1.0f;
+        private float _currentTime = 0;
         /// <summary>
         /// Bounce the object's vertical velocity.
         /// </summary>
@@ -90,6 +93,15 @@ namespace Platformer.Mechanics
 
         protected virtual void Update()
         {
+            if (_isWallJumping)
+            {
+                _currentTime += Time.deltaTime;
+                if (_currentTime >= _waitTimeBeforeControlsAfterWallJump)
+                {
+                    _isWallJumping = false;
+                    _currentTime = 0;
+                }
+            }
             targetVelocity = Vector2.zero;
             ComputeVelocity();
         }
@@ -160,8 +172,14 @@ namespace Platformer.Mechanics
                     }
                     else
                     {
-                        //We are airborne, but hit something, so cancel horizontal
-                        velocity.x *= 0;
+                        //We are airborne, but hit something next to us, so cancel horizontal
+                        _hittingWall = false;
+                        if (Mathf.Abs(currentNormal.x) > 0)
+                        {
+                            _wallDirection = velocity.x;
+                            velocity.x *= 0;
+                            _hittingWall = true;
+                        }
 
                         //We are airborne, but hit something above us, so cancel vertical up 
                         if (currentNormal.y < 0)

@@ -27,6 +27,9 @@ namespace Platformer.Mechanics
         /// </summary>
         public float jumpTakeOffSpeed = 7;
 
+        [SerializeField] private float _wallJumpTakeOffSpeed = 3;
+        [SerializeField] private float _wallJumpTimeBeforeGainingBackControls = 1.0f;
+
         public JumpState jumpState = JumpState.Grounded;
         private bool stopJump;
         /*internal new*/ public Collider2D collider2d;
@@ -44,6 +47,9 @@ namespace Platformer.Mechanics
         private bool _hasDoubleJumped = false;
         private bool _doubleJump = false;
 
+        private bool _canWallJump = false;
+        private bool _wallJump = false;
+
         public Bounds Bounds => collider2d.bounds;
 
         void Awake()
@@ -53,16 +59,24 @@ namespace Platformer.Mechanics
             collider2d = GetComponent<Collider2D>();
             spriteRenderer = GetComponent<SpriteRenderer>();
             animator = GetComponent<Animator>();
+            _waitTimeBeforeControlsAfterWallJump = _wallJumpTimeBeforeGainingBackControls;
         }
 
         protected override void Update()
         {
             if (controlEnabled)
             {
-                move.x = Input.GetAxis("Horizontal");
+                if (!_isWallJumping) 
+                {
+                    move.x = Input.GetAxis("Horizontal");
+                }
                 if (jumpState == JumpState.Grounded && Input.GetButtonDown("Jump"))
                 {
                     jumpState = JumpState.PrepareToJump;
+                }
+                else if(jumpState == JumpState.InFlight && Input.GetButtonDown("Jump") && _hittingWall && _canWallJump)
+                {
+                    jumpState = JumpState.WallJump;
                 }
                 else if(jumpState == JumpState.InFlight && Input.GetButtonDown("Jump") && _canDoubleJump && !_hasDoubleJumped)
                 {
@@ -72,6 +86,7 @@ namespace Platformer.Mechanics
                 {
                     stopJump = true;
                     _canDoubleJump = true;
+                    _canWallJump = true;
                     Schedule<PlayerStopJump>().player = this;
                 }
             }
@@ -114,10 +129,20 @@ namespace Platformer.Mechanics
                         jumpState = JumpState.Landed;
                     }
                     break;
+                case JumpState.WallJump:
+                    jumpState = JumpState.Jumping;
+                    _wallJump = true;
+                    stopJump = false;
+                    _canDoubleJump = false;
+                    _hasDoubleJumped = true;
+                    _isWallJumping = true;
+                    break;
                 case JumpState.Landed:
                     jumpState = JumpState.Grounded;
                     _hasDoubleJumped = false;
-
+                    _hittingWall = false;
+                    _canWallJump = false;
+                    _isWallJumping = false;
                     break;
             }
         }
@@ -133,6 +158,23 @@ namespace Platformer.Mechanics
             {
                 velocity.y = jumpTakeOffSpeed * model.jumpModifier;
                 _doubleJump = false;
+            }
+            else if (_wallJump)
+            {
+                velocity.y = _wallJumpTakeOffSpeed * model.jumpModifier;
+
+                if (_wallDirection > 0)
+                {
+                    velocity.x = -_wallJumpTakeOffSpeed * model.jumpModifier;
+                    move.x = -1;
+                }
+                else
+                {
+                    velocity.x = _wallJumpTakeOffSpeed * model.jumpModifier;
+                    move.x = 1;
+                }
+                _wallJump = false;
+                _hittingWall = false;
             }
             else if (stopJump)
             {
@@ -160,6 +202,7 @@ namespace Platformer.Mechanics
             PrepareToJump,
             PrepareForDoubleJump,
             Jumping,
+            WallJump,
             InFlight,
             Landed
         }
