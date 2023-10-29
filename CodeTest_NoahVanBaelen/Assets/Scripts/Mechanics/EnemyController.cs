@@ -22,6 +22,7 @@ namespace Platformer.Mechanics
         SpriteRenderer spriteRenderer;
 
         public Bounds Bounds => _collider.bounds;
+        private Vector3 _startLocation;
 
         void Awake()
         {
@@ -29,6 +30,7 @@ namespace Platformer.Mechanics
             _collider = GetComponent<Collider2D>();
             _audio = GetComponent<AudioSource>();
             spriteRenderer = GetComponent<SpriteRenderer>();
+            _startLocation = transform.position;
         }
 
         void OnCollisionEnter2D(Collision2D collision)
@@ -49,6 +51,11 @@ namespace Platformer.Mechanics
                 if (mover == null) mover = path.CreateMover(control.maxSpeed * 0.5f);
                 control.move.x = Mathf.Clamp(mover.Position.x - transform.position.x, -1, 1);
             }
+        }
+
+        public void TeleportToStartLocation()
+        {
+            transform.position = _startLocation;
         }
 
     }

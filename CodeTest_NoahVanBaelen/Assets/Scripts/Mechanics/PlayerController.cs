@@ -53,6 +53,8 @@ namespace Platformer.Mechanics
         private bool _canWallJump = false;
         private bool _wallJump = false;
 
+        private List<EnemyController> _defeatedEnemies = new List<EnemyController>();
+
         public Bounds Bounds => collider2d.bounds;
 
         void Awake()
@@ -220,6 +222,22 @@ namespace Platformer.Mechanics
             WallJump,
             InFlight,
             Landed
+        }
+
+        public void AddDefeatedEnemy(EnemyController enemy)
+        {
+            _defeatedEnemies.Add(enemy);
+        }
+
+        public void RespawnEnemies()
+        {
+            foreach (EnemyController enemy in _defeatedEnemies)
+            {
+                var ev = Schedule<EnemyRespawn>();
+                ev.enemy = enemy;
+            }
+
+            _defeatedEnemies.Clear();
         }
 
     }
