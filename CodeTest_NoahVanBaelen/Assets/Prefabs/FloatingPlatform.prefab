@@ -95,6 +95,7 @@ GameObject:
   - component: {fileID: 8690942574610102956}
   - component: {fileID: 8690942574610102959}
   - component: {fileID: 8690942574610102958}
+  - component: {fileID: 6436250265496500203}
   m_Layer: 0
   m_Name: FloatingPlatform
   m_TagString: Untagged
@@ -163,6 +164,19 @@ MonoBehaviour:
   _verticleFrequency: 0
   _horizontalAmplitude: 0
   _horizontalFrequency: 0
+--- !u!114 &6436250265496500203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8690942574610102957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33d0cdf0fce663342b8b1489f19ae24b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _timeBeforeOffThePlatform: 0.3
 --- !u!1 &8690942575125646616
 GameObject:
   m_ObjectHideFlags: 0
