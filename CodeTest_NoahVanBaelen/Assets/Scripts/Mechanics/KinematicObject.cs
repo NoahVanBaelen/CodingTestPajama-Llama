@@ -152,7 +152,7 @@ namespace Platformer.Mechanics
                     var currentNormal = hitBuffer[i].normal;
 
                     //is this surface flat enough to land on?
-                    if (currentNormal.y > minGroundNormalY || (_movingPlatform != null && currentNormal == Vector2.up))
+                    if (currentNormal.y > minGroundNormalY || _movingPlatform)
                     {
                         IsGrounded = true;
                         // if moving up, change the groundNormal to new surface normal.
