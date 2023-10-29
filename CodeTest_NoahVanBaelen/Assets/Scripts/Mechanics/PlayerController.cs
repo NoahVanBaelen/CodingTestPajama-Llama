@@ -35,6 +35,7 @@ namespace Platformer.Mechanics
         /*internal new*/ public Collider2D collider2d;
         /*internal new*/ public AudioSource audioSource;
         public Health health;
+        public RespawnLogic _respawnLogic;
         public bool controlEnabled = true;
 
         bool jump;
@@ -59,6 +60,7 @@ namespace Platformer.Mechanics
             collider2d = GetComponent<Collider2D>();
             spriteRenderer = GetComponent<SpriteRenderer>();
             animator = GetComponent<Animator>();
+            _respawnLogic = GetComponent<RespawnLogic>();
             _waitTimeBeforeControlsAfterWallJump = _wallJumpTimeBeforeGainingBackControls;
         }
 
@@ -216,5 +218,6 @@ namespace Platformer.Mechanics
             InFlight,
             Landed
         }
+
     }
 }

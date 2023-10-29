@@ -20,6 +20,7 @@ namespace Platformer.Gameplay
             model.virtualCamera.m_Follow = null;
             model.virtualCamera.m_LookAt = null;
             player.controlEnabled = false;
+            player._respawnLogic.CheckForHelp();
 
             if (player.audioSource && player.ouchAudio)
                 player.audioSource.PlayOneShot(player.ouchAudio);
