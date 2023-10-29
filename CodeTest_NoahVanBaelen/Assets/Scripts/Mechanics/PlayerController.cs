@@ -5,6 +5,7 @@ using Platformer.Gameplay;
 using static Platformer.Core.Simulation;
 using Platformer.Model;
 using Platformer.Core;
+using TMPro;
 
 namespace Platformer.Mechanics
 {
@@ -29,6 +30,7 @@ namespace Platformer.Mechanics
 
         [SerializeField] private float _wallJumpTakeOffSpeed = 3;
         [SerializeField] private float _wallJumpTimeBeforeGainingBackControls = 1.0f;
+        public ScoreKeeper _scoreKeeper;
 
         public JumpState jumpState = JumpState.Grounded;
         private bool stopJump;
@@ -61,6 +63,7 @@ namespace Platformer.Mechanics
             spriteRenderer = GetComponent<SpriteRenderer>();
             animator = GetComponent<Animator>();
             _respawnLogic = GetComponent<RespawnLogic>();
+            _scoreKeeper = GetComponent<ScoreKeeper>();
             _waitTimeBeforeControlsAfterWallJump = _wallJumpTimeBeforeGainingBackControls;
         }
 
