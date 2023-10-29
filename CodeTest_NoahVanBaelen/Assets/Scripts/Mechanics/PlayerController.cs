@@ -196,6 +196,16 @@ namespace Platformer.Mechanics
             targetVelocity = move * maxSpeed;
         }
 
+        public void SetMovingPlatform(GameObject movingPlatform)
+        {
+            _movingPlatform = movingPlatform;
+        }
+
+        public void SetMovingPlatform()
+        {
+            _movingPlatform = null;
+        }
+
         public enum JumpState
         {
             Grounded,

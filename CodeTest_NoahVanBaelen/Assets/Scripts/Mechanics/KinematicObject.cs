@@ -43,6 +43,8 @@ namespace Platformer.Mechanics
         protected bool _isWallJumping = false;
         protected float _waitTimeBeforeControlsAfterWallJump = 1.0f;
         private float _currentTime = 0;
+
+        protected GameObject _movingPlatform;
         /// <summary>
         /// Bounce the object's vertical velocity.
         /// </summary>
@@ -150,7 +152,7 @@ namespace Platformer.Mechanics
                     var currentNormal = hitBuffer[i].normal;
 
                     //is this surface flat enough to land on?
-                    if (currentNormal.y > minGroundNormalY)
+                    if (currentNormal.y > minGroundNormalY || (_movingPlatform != null && currentNormal == Vector2.up))
                     {
                         IsGrounded = true;
                         // if moving up, change the groundNormal to new surface normal.
@@ -193,6 +195,20 @@ namespace Platformer.Mechanics
                 }
             }
             body.position = body.position + move.normalized * distance;
+        }
+
+        private void LateUpdate()
+        {
+            if (_movingPlatform)
+            {
+                Vector3 lastFramePosition = _movingPlatform.GetComponent<MovingPlatform>().GetLastFramePosition();
+                Vector3 currentPosition = _movingPlatform.transform.position;
+                Vector3 deltaPosition = currentPosition - lastFramePosition;
+                Vector3 objectPosition = body.position;
+                objectPosition.x += deltaPosition.x;
+                objectPosition.y += deltaPosition.y;
+                body.position = objectPosition;
+            }
         }
 
     }

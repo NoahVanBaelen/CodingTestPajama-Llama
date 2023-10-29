@@ -11,6 +11,7 @@ public class MovingPlatform : MonoBehaviour
     [SerializeField] private float _horizontalFrequency;
 
     private Vector3 _startPosition;
+    private Vector3 _lastframePosition;
     void Start()
     {
         _startPosition = transform.position;
@@ -19,9 +20,15 @@ public class MovingPlatform : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        _lastframePosition = transform.position;
         float newYPosition = _startPosition.y + _verticleAmplitude * Mathf.Sin(Time.time * _verticleFrequency);
         float newXPosition = _startPosition.x + _horizontalAmplitude * Mathf.Sin(Time.time * _horizontalFrequency);
 
         transform.position = new Vector3(newXPosition, newYPosition, _startPosition.z);
+    }
+
+    public Vector3 GetLastFramePosition()
+    {
+        return _lastframePosition;
     }
 }
